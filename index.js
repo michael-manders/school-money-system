@@ -1,6 +1,7 @@
-const {registerName, changeAmount, getAmount, setSeat, deleteSeat} = require("./functions/database");
 const http = require('http');
 const fs = require('fs');
+const {registerName, changeAmount, getAmount, setSeat, deleteSeat} = require("./functions/database");
+const hostname = '127.0.0.1'
 const port = process.env.PORT || 5000; // define port 
 
 const server = http.createServer(async (req, res) => {
@@ -102,7 +103,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-    console.log(`Server running at http://:${port}/`);
+    console.log(`Server running at http://${hostname}:${port}/`);
 })
 
 function parseCookies (request) {
