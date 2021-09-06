@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Student</title>
+        <link rel="stylesheet" href="/css/css/student.css" />
+        <script>
+            function change_period(period) {
+                document.period = period;
+                updata_names(period);
+                period = "Period " + period;
+
+                document.getElementById("period_name").innerText = period;
+
+                document.cookie = "period=" + period;
+            }
+
+            function start() {
+                document.period = document.cookie.replace("period=Period ", "");
+                document.data = "replace";
+                document.ok = false;
+                updata_names(document.period);
+                document.getElementById("amount").style.display = "none";
+
+                document
+                    .getElementById("ok")
+                    .addEventListener("click", function () {
+                        document.ok = true;
+                    });
+            }
+        </script>
+        <script>
+            function updata_names(period) {
+                elements = document.getElementsByClassName("name_button");
+                for (element of elements) {
+                    element.innerText = "";
+                }
+
+                let names = document.data[period];
+                i = 0;
+                for (name in names) {
+                    elements[i].innerText = name;
+                    i++;
+                }
+            }
+
+            function click_name(element) {
+                name = element.innerText;
+                if (!document.data[document.period][name]) return;
+                amount = document.data[document.period][name]["value"];
+                text = name + " has " + amount + " Scholar Dollars";
+                document.getElementById("amount_words").innerText = text;
+                document.getElementById("amount").style.display = "";
+
+                function hide() {
+                    if (document.ok == 0) {
+                        setTimeout(hide, 50);
+                    } else {
+                        document.getElementById("amount").style.display =
+                            "none";
+                        document.ok = false;
+                    }
+                }
+
+                hide();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <div id="style">
+            <div id="header">
+                <div class="dropdown">
+                    <button class="dropbtn">Select Period</button>
+                    <div class="dropdown-content">
+                        <a onclick="change_period('1')">Period 1</a>
+                        <a onclick="change_period('2')">Period 2</a>
+                        <a onclick="change_period('3')">Period 3</a>
+                        <a onclick="change_period('4')">Period 4</a>
+                        <a onclick="change_period('5')">Period 5</a>
+                        <a onclick="change_period('6')">Period 6</a>
+                        <a onclick="change_period('7')">Period 7</a>
+                        <a onclick="change_period('8')">Period 8</a>
+                    </div>
+                </div>
+                <a id="teacher_portal_a" href="../pages/teacher"
+                    >Teacher <br />Portal</a
+                >
+                <h1>Student Portal</h1>
+            </div>
+            <div id="sidebar">
+                <h3 id="period_name">Select Period -></h3>
+                <div id="names">
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                    <div class="name_button" onclick="click_name(this)"></div>
+                </div>
+            </div>
+            <div id="body"></div>
+        </div>
+        <div id="amount">
+            <p id="amount_words">Michael has 9999 Scholar Dollars</p>
+            <div id="ok">OK</div>
+        </div>
+    </body>
+</html>

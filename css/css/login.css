@@ -1,0 +1,32 @@
+:root {
+    --indigo: rgb(49, 0, 98);
+    --eggplant: rgb(109, 67, 90);
+    --red: rgb(255, 105, 120);
+    --white: rgb(255, 252, 249);
+    --blue: rgb(177, 237, 232);
+    --darker_blue: rgb(145, 235, 227);
+    --even_darker_blue: rgb(76, 173, 165);
+    --lighter_indigo: rgb(79, 13, 145);
+    --saturated_red: rgb(222, 64, 80);
+}
+
+
+body {
+    background-color: var(--indigo);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    
+}
+
+#lable {
+    color: var(--white);
+    font-size: 3rem;
+    text-align: center;
+}
+
+input[type="text"] {
+    border: none;
+    border-bottom: 4px solid var(--red);
+    width: 30%;
+    background-color: transparent;
+    align-self: center;
+}

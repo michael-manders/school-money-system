@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/css/css/teacher.css" />
+        <title>Teacher Page</title>
+        <script
+            type="text/javascript"
+            src="http://code.jquery.com/jquery-1.7.1.min.js"
+        ></script>
+        <script>
+            url = window.location.href.split("/pages/")[0];
+            console.log(url);
+
+            const eggplant = "#6d435a";
+            const darker_eggplant = "#3d2131";
+            const red = "#ff6978";
+            document.selected = [];
+            document.period = document.cookie.split("; ") || ["Period 1"];
+
+            console.log(document.period);
+
+            for (item of document.period) {
+                if (item.includes("Period"))
+                    document.period = item
+                        .replace("Period ", "")
+                        .replace("Period=", "")
+                        .replace("period=", "");
+            }
+
+            console.log(document.period);
+
+            document.editing = false;
+            document.confirm = 0;
+            function start() {
+                for (element of document.getElementsByClassName("name_form")) {
+                    element.style.display = "none";
+                }
+                for (element of document.getElementsByClassName("delete")) {
+                    element.style.display = "none";
+                }
+                document.getElementById("confirm").style.display = "none";
+                update_seats();
+
+                period = document.period;
+                period = "Period " + period;
+                document.getElementById("teacher_desk").innerText = period;
+            }
+
+            function update_seats() {
+                for (let i = 1; i <= 27; i++) {
+                    deskID = "desk" + i.toString();
+                    document
+                        .getElementById(deskID)
+                        .getElementsByClassName("name_lable")[0].innerText = "";
+                    document
+                        .getElementById(deskID)
+                        .getElementsByClassName("amount")[0].innerText = "";
+                }
+                for (name in document.seats[document.period]) {
+                    if (
+                        document.seats[document.period][name]["seat"] !== null
+                    ) {
+                        seat = document.seats[document.period][name]["seat"];
+                        deskID = "desk" + (seat + 1).toString();
+                        document
+                            .getElementById(deskID)
+                            .getElementsByClassName("name_lable")[0].innerText =
+                            name;
+                        document
+                            .getElementById(deskID)
+                            .getElementsByClassName("amount")[0].innerText =
+                            document.seats[document.period][name]["value"];
+                    }
+                }
+            }
+
+            document.seats = "replace_seats";
+        </script>
+        <script>
+            function confirm_button(type) {
+                document.confirm = type ? 1 : 2;
+            }
+            function select(id) {
+                if (document.editing) return;
+                id = "desk" + id.toString();
+                if (document.selected.includes(id)) {
+                    document.getElementById(id).style.backgroundColor =
+                        eggplant;
+                    i = document.selected.indexOf(id);
+                    document.selected.splice(i, 1);
+                } else {
+                    document.getElementById(id).style.backgroundColor =
+                        darker_eggplant;
+                    document.selected.push(id);
+                }
+            }
+
+            function activate_names() {
+                if (document.editing) {
+                    for (element of document.getElementsByClassName(
+                        "name_form"
+                    )) {
+                        element.style.display = "none";
+                    }
+                    document.getElementById("edit_names").innerText =
+                        "Edit names";
+                    check_names();
+                    document.getElementById(
+                        "edit_names"
+                    ).style.backgroundColor = red;
+                    document.getElementById("edit_names").style.borderColor =
+                        eggplant;
+                    document.editing = false;
+                    for (element of document.getElementsByClassName("delete")) {
+                        element.style.display = "none";
+                    }
+                } else {
+                    for (element of document.getElementsByClassName(
+                        "name_form"
+                    )) {
+                        element.style.display = "";
+                    }
+                    document.getElementById("edit_names").innerText = "Save";
+                    document.getElementById(
+                        "edit_names"
+                    ).style.backgroundColor = eggplant;
+                    document.getElementById("edit_names").style.borderColor =
+                        red;
+                    document.editing = true;
+                    for (element of document.getElementsByClassName("delete")) {
+                        element.style.display = "";
+                    }
+                }
+            }
+
+            function give_money(amount) {
+                selected = document.selected;
+                names = [];
+                for (deskID of selected) {
+                    name = document
+                        .getElementById(deskID)
+                        .getElementsByClassName("name_lable")[0].innerHTML;
+                    if (name.length > 1) names.push(name);
+                    document.getElementById(deskID).style.backgroundColor =
+                        eggplant;
+                }
+                output = {
+                    names: names,
+                    amount: amount,
+                    period: document.period,
+                    action: "give",
+                };
+                document
+                    .getElementById("confirm")
+                    .getElementsByTagName("p")[0].innerText =
+                    "Are you sure you want to give " +
+                    amount.toString() +
+                    " Scholar Dollars to " +
+                    names.toString() +
+                    "?";
+                document.getElementById("confirm").style.display = "";
+
+                function send() {
+                    if (document.confirm == 0) {
+                        setTimeout(send, 50);
+                    } else {
+                        if (document.confirm == 1) {
+                            $.ajax({
+                                url: url,
+                                data: JSON.stringify(output),
+                                type: "POST",
+                            });
+                            document.selected = [];
+                            document.confirm = 0;
+                            document.getElementById("confirm").style.display =
+                                "none";
+
+                            for (name of names) {
+                                document.seats[document.period][name][
+                                    "value"
+                                ] += amount;
+                            }
+
+                            update_seats();
+                        } else {
+                            document.getElementById("confirm").style.display =
+                                "none";
+                            document.confirm = 0;
+                            update_seats();
+                            return;
+                        }
+                    }
+                }
+                send();
+            }
+
+            function purchase(amount) {
+                selected = document.selected;
+                names = [];
+                for (deskID of selected) {
+                    name = document
+                        .getElementById(deskID)
+                        .getElementsByClassName("name_lable")[0].innerHTML;
+                    if (name.length > 1) names.push(name);
+                    document.getElementById(deskID).style.backgroundColor =
+                        eggplant;
+                }
+
+                let notEnough = [];
+
+                for (name of names) {
+                    if (
+                        amount > document.seats[document.period][name]["value"]
+                    ) {
+                        notEnough.push(name);
+
+                        const index = names.indexOf(name);
+                        if (index > -1) {
+                            names.splice(index, 1);
+                        }
+                    }
+                }
+
+                output = {
+                    names: names,
+                    amount: amount,
+                    period: document.period,
+                    action: "purchase",
+                };
+                document
+                    .getElementById("confirm")
+                    .getElementsByTagName("p")[0].innerText =
+                    "Are you sure you want to purchase item for " +
+                    amount.toString() +
+                    " Scholar Dollars?";
+                document.getElementById("confirm").style.display = "";
+
+                function send() {
+                    if (document.confirm == 0) {
+                        setTimeout(send, 50);
+                    } else {
+                        if (document.confirm == 1) {
+                            $.ajax({
+                                url: url,
+                                data: JSON.stringify(output),
+                                type: "POST",
+                            });
+                            document.selected = [];
+                            document.confirm = 0;
+                            document.getElementById("confirm").style.display =
+                                "none";
+                            if (notEnough.length > 1) {
+                                alert(
+                                    "The following people did not have enough: " +
+                                        notEnough.toString()
+                                );
+                            }
+
+                            for (name of names) {
+                                document.seats[document.period][name]["value"] =
+                                    document.seats[document.period][name][
+                                        "value"
+                                    ] - amount;
+                            }
+
+                            update_seats();
+                        } else {
+                            document.getElementById("confirm").style.display =
+                                "none";
+                            document.confirm = 0;
+                            update_seats();
+                            return;
+                        }
+                    }
+                }
+                send();
+            }
+
+            function check_names() {
+                output = {};
+                for (let i = 1; i <= 27; i++) {
+                    value = document
+                        .getElementsByClassName("name_form")
+                        [i - 1].getElementsByTagName("input")[0].value;
+                    if (value.toString().length > 2) {
+                        output[i - 1] = value;
+                    }
+                }
+                post = {
+                    period: document.period,
+                    data: output,
+                    action: "seat",
+                };
+                $.ajax({
+                    url: url,
+                    data: JSON.stringify(post),
+                    type: "POST",
+                });
+
+                location.reload();
+            }
+
+            function change_period(period) {
+                document.period = period;
+                document.cookie = "Period=Period " + period;
+                document.getElementById("teacher_desk").innerText =
+                    "Period " + period;
+                update_seats();
+            }
+
+            function delete_name(seat) {
+                seat = (seat - 1).toString();
+                nameReturn = "";
+                for (name in document.seats[document.period]) {
+                    if (document.seats[document.period][name]["seat"] == null)
+                        continue;
+                    if (
+                        seat ===
+                        document.seats[document.period][name]["seat"].toString()
+                    ) {
+                        nameReturn = name;
+                    }
+                }
+
+                document.seats[document.period][nameReturn]["seat"] = null;
+
+                post = {
+                    period: document.period,
+                    data: nameReturn,
+                    action: "delete",
+                };
+                $.ajax({
+                    url: url,
+                    data: JSON.stringify(post),
+                    type: "POST",
+                });
+
+                update_seats();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <div id="style">
+            <div id="header">
+                <div class="dropdown">
+                    <button class="dropbtn">Select Period</button>
+                    <div class="dropdown-content">
+                        <a onclick="change_period('1')">Period 1</a>
+                        <a onclick="change_period('2')">Period 2</a>
+                        <a onclick="change_period('3')">Period 3</a>
+                        <a onclick="change_period('4')">Period 4</a>
+                        <a onclick="change_period('5')">Period 5</a>
+                        <a onclick="change_period('6')">Period 6</a>
+                        <a onclick="change_period('7')">Period 7</a>
+                        <a onclick="change_period('8')">Period 8</a>
+                    </div>
+                </div>
+                <h1>Teacher Portal</h1>
+            </div>
+            <div id="sidebar">
+                <h3>Give Money</h3>
+                <div id="give_button_container">
+                    <div id="give_button" onclick="give_money(5)">5</div>
+                    <div id="give_button" onclick="give_money(10)">10</div>
+                    <div id="give_button" onclick="give_money(15)">15</div>
+                    <div id="give_button" onclick="give_money(20)">20</div>
+                    <div id="give_button" onclick="give_money(30)">30</div>
+                    <div id="give_button" onclick="give_money(50)">50</div>
+                </div>
+                <h3>Purchase Item</h3>
+                <div id="buy_button_container">
+                    <div id="buy_button" onclick="purchase(100)">100</div>
+                    <div id="buy_button" onclick="purchase(150)">150</div>
+                    <div id="buy_button" onclick="purchase(200)">200</div>
+                    <div id="buy_button" onclick="purchase(300)">300</div>
+                    <div id="buy_button" onclick="purchase(400)">400</div>
+                    <div id="buy_button" onclick="purchase(500)">500</div>
+                </div>
+                <div id="edit_names" onclick="activate_names()">Edit Names</div>
+            </div>
+            <div id="body">
+                <div class="desk" id="desk1" onclick="select(1)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk1">New name:</label><br />
+                        <input type="text" id="desk1" />
+                    </form>
+                    <div class="delete" onclick="delete_name(1)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk2" onclick="select(2)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk2">New name:</label><br />
+                        <input type="text" id="desk2" />
+                    </form>
+                    <div class="delete" onclick="delete_name(2)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk3" onclick="select(3)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk3">New name:</label><br />
+                        <input type="text" id="desk3" />
+                    </form>
+                    <div class="delete" onclick="delete_name(3)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk4" onclick="select(4)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk4">New name:</label><br />
+                        <input type="text" id="desk4" />
+                    </form>
+                    <div class="delete" onclick="delete_name(4)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk5" onclick="select(5)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk5">New name:</label><br />
+                        <input type="text" id="desk5" />
+                    </form>
+                    <div class="delete" onclick="delete_name(5)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk6" onclick="select(6)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk6">New name:</label><br />
+                        <input type="text" id="desk6" />
+                    </form>
+                    <div class="delete" onclick="delete_name(6)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk7" onclick="select(7)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk7">New name:</label><br />
+                        <input type="text" id="desk7" />
+                    </form>
+                    <div class="delete" onclick="delete_name(7)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk8" onclick="select(8)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk8">New name:</label><br />
+                        <input type="text" id="desk8" />
+                    </form>
+                    <div class="delete" onclick="delete_name(8)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk9" onclick="select(9)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk9">New name:</label><br />
+                        <input type="text" id="desk9" />
+                    </form>
+                    <div class="delete" onclick="delete_name(9)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk10" onclick="select(10)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk10">New name:</label><br />
+                        <input type="text" id="desk10" />
+                    </form>
+                    <div class="delete" onclick="delete_name(10)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk11" onclick="select(11)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk">New name:</label><br />
+                        <input type="text" id="desk11" />
+                    </form>
+                    <div class="delete" onclick="delete_name(11)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk12" onclick="select(12)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk12">New name:</label><br />
+                        <input type="text" id="desk12" />
+                    </form>
+                    <div class="delete" onclick="delete_name(12)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk13" onclick="select(13)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk13">New name:</label><br />
+                        <input type="text" id="desk13" />
+                    </form>
+                    <div class="delete" onclick="delete_name(13)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk14" onclick="select(14)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk14">New name:</label><br />
+                        <input type="text" id="desk14" />
+                    </form>
+                    <div class="delete" onclick="delete_name(14)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk15" onclick="select(15)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk15">New name:</label><br />
+                        <input type="text" id="desk15" />
+                    </form>
+                    <div class="delete" onclick="delete_name(15)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk16" onclick="select(16)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk16">New name:</label><br />
+                        <input type="text" id="desk16" />
+                    </form>
+                    <div class="delete" onclick="delete_name(16)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk17" onclick="select(17)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk17">New name:</label><br />
+                        <input type="text" id="desk17" />
+                    </form>
+                    <div class="delete" onclick="delete_name(17)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk18" onclick="select(18)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk18">New name:</label><br />
+                        <input type="text" id="desk18" />
+                    </form>
+                    <div class="delete" onclick="delete_name(18)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk19" onclick="select(19)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk19">New name:</label><br />
+                        <input type="text" id="desk19" />
+                    </form>
+                    <div class="delete" onclick="delete_name(19)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk20" onclick="select(20)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk20">New name:</label><br />
+                        <input type="text" id="desk20" />
+                    </form>
+                    <div class="delete" onclick="delete_name(20)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk21" onclick="select(21)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk21">New name:</label><br />
+                        <input type="text" id="desk21" />
+                    </form>
+                    <div class="delete" onclick="delete_name(21)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk22" onclick="select(22)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk22">New name:</label><br />
+                        <input type="text" id="desk22" />
+                    </form>
+                    <div class="delete" onclick="delete_name(22)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk23" onclick="select(23)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk23">New name:</label><br />
+                        <input type="text" id="desk23" />
+                    </form>
+                    <div class="delete" onclick="delete_name(23)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk24" onclick="select(24)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk24">New name:</label><br />
+                        <input type="text" id="desk24" />
+                    </form>
+                    <div class="delete" onclick="delete_name(24)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk25" onclick="select(25)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk25">New name:</label><br />
+                        <input type="text" id="desk25" />
+                    </form>
+                    <div class="delete" onclick="delete_name(25)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk26" onclick="select(26)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk26">New name:</label><br />
+                        <input type="text" id="desk26" />
+                    </form>
+                    <div class="delete" onclick="delete_name(26)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div class="desk" id="desk27" onclick="select(27)">
+                    <h4 class="name_lable"></h4>
+                    <form onsubmit="return false" class="name_form">
+                        <label for="desk27">New name:</label><br />
+                        <input type="text" id="desk27" />
+                    </form>
+                    <div class="delete" onclick="delete_name(27)">X</div>
+                    <p class="amount"></p>
+                    <p></p>
+                </div>
+
+                <div id="table"></div>
+                <div id="teacher_desk">Period 1</div>
+            </div>
+        </div>
+        <div id="confirm">
+            <p></p>
+            <div id="yes" onclick="confirm_button(true)">Yes</div>
+            <div id="no" onclick="confirm_button(false)">No</div>
+        </div>
+    </body>
+</html>

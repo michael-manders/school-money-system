@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Redirect</title>
+        <script>
+            function start() {
+                console.log(document.cookie);
+                document.cookie = "Password=worthington";
+                location = "../teacher?Password=worthington";
+            }
+        </script>
+    </head>
+    <body onload="start()"></body>
+</html>

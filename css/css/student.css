@@ -1,0 +1,189 @@
+:root {
+    --indigo: rgb(49, 0, 98);
+    --eggplant: rgb(109, 67, 90);
+    --red: rgb(255, 105, 120);
+    --white: rgb(255, 252, 249);
+    --blue: rgb(177, 237, 232);
+    --darker_blue: rgb(145, 235, 227);
+    --even_darker_blue: rgb(76, 173, 165);
+    --lighter_indigo: rgb(79, 13, 145);
+    --saturated_red: rgb(222, 64, 80);
+}
+
+body {
+    background-color: var(--indigo);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#style {
+    display: grid;
+    grid-template-columns: 20vw 78vw;
+    grid-template-rows: 10vh 83vh;
+    grid-template-areas:
+        "side top"
+        "side body";
+    gap: 1vw;
+}
+
+#style > div {
+    height: 100%;
+    width: 100%;
+    border-radius: 1vh;
+}
+
+#sidebar {
+    grid-area: side;
+}
+
+#header {
+    background-color: var(--blue);
+    grid-area: top;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#body {
+    background-color: var(--blue);
+    grid-area: body;
+}
+
+#body > div {
+    border-radius: 8%;
+    box-shadow: 4px 4px var(--indigo);
+}
+.dropbtn {
+    background-color: var(--red);
+    margin: 15%;
+    border-radius: 20%;
+    color: var(--white);
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--darker_blue);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border: 3px solid var(--indigo);
+}
+
+.dropdown-content a {
+    color: var(--indigo);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+.dropdown-content a:hover {
+    background-color: var(--white);
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.dropdown:hover .dropbtn {
+    background-color: var(--eggplant);
+}
+
+#names {
+    height: 85%;
+    margin-top: 1%;
+    overflow: auto;
+}
+
+.name_button {
+    height: 7%;
+    width: 94%;
+    background-color: var(--darker_blue);
+    border: 5px solid var(--red);
+    border-radius: 5vw;
+    color: black;
+    margin-top: 2%;
+    text-align: center;
+    font-size: 2rem;
+}
+
+#names::-webkit-scrollbar {
+    width: 15px;
+}
+
+#names::-webkit-scrollbar-track {
+    background: var(--indigo);
+}
+
+#names::-webkit-scrollbar-thumb {
+    background-color: var(--darker_blue);
+    border: 2px solid var(--lighter_indigo);
+    border-radius: 3vh;
+}
+
+.name_button:hover {
+    background-color: var(--even_darker_blue);
+}
+
+#period_name {
+    font-size: 3.5vh;
+    color: var(--white);
+    text-align: center;
+}
+
+#amount {
+    position: absolute;
+    width: 50%;
+    height: 30%;
+    background-color: var(--eggplant);
+    border: 5px solid var(--indigo);
+    border-radius: 8vh;
+    left: 25%;
+    top: 35%;
+}
+
+#amount > p {
+    color: var(--white);
+    text-align: center;
+    font-size: 8vh;
+    position: relative;
+    top: -20%;
+}
+
+#amount > div {
+    width: 30%;
+    height: 23%;
+    background-color: greenyellow;
+    border: 5px solid indigo;
+    border-radius: 50vw;
+    position: absolute;
+    top: 21vh;
+    left: 16vw;
+    color: var(--eggplant);
+    text-align: center;
+    font-size: 5vh;
+}
+
+#amount > div:hover {
+    background-color: rgb(209, 247, 154);
+}
+
+#teacher_portal_a {
+    width: 12%;
+    height: 65%;
+    background-color: var(--red);
+    border-radius: 10vh;
+    margin-left: 0.5vw;
+    margin-right: 1vw;
+    text-align: center;
+    color: var(--white);
+    text-decoration: none;
+}
+#teacher_portal {
+    font-size: 2em;
+    font-weight: bold;
+}
