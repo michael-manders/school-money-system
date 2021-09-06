@@ -72,7 +72,7 @@ const server = http.createServer(async (req, res) => {
                 res.end(txt)
             }
         }
-        else if (url.includes("/student")) {
+        else if (url.includes("/student" || url === "/")) {
             fn = require("./pages/student/student");
             fn.execute(data, res);
         }
