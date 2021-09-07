@@ -7,6 +7,10 @@
         "Dustin": {
             "value": 0,
             "seat": 1
+        },
+        "Heroku": {
+            "value": 0,
+            "seat": 2
         }
     },
     "2": {},
