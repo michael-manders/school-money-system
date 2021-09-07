@@ -42,8 +42,8 @@ const server = http.createServer(async (req, res) => {
         
             fs.writeFileSync("./stats.json", JSON.stringify(stats, null, 4));
         });
-        res.writeHead(200, {'Content-Type': 'text/html'}); // status
-        res.end('callback(\'{\"msg\": \"OK\"}\')');
+        
+        
     }
 
     res.statusCode = 200;
@@ -51,11 +51,11 @@ const server = http.createServer(async (req, res) => {
     url = req.url.split("?")[0]; // devide the data
     data = req.url.split("?")[1];
 
-    //console.log(url, data);
+    console.log(url, data);
 
     pass = ""
 
-    if (url.includes("/pages") || url === '/') { // check for which page, get the function to send the page, then execute
+    if (url.includes("/pages")) { // check for which page, get the function to send the page, then execute
         if (url.includes("/teacher")) {
             if (data) {
                 pass = data.replace("Password=", "");
@@ -99,6 +99,10 @@ const server = http.createServer(async (req, res) => {
         }
         res.end(data);
 
+    }
+    else {
+        fn = require("./pages/student/student");
+        fn.execute(data, res);
     }
 });
 
