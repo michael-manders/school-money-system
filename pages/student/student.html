@@ -40,6 +40,8 @@
                 let names = document.data[period];
                 i = 0;
                 for (name in names) {
+                    if (document.data[document.period][name]["seat"] == null)
+                        continue;
                     elements[i].innerText = name;
                     i++;
                 }
