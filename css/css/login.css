@@ -10,11 +10,11 @@
     --saturated_red: rgb(222, 64, 80);
 }
 
-
 body {
     background-color: var(--indigo);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    
+    align-content: center;
+    align-items: center;
 }
 
 #lable {
@@ -26,7 +26,15 @@ body {
 input[type="text"] {
     border: none;
     border-bottom: 4px solid var(--red);
-    width: 30%;
+    width: 40%;
+    height: 60px;
+    font-size: 40px;
+    color: var(--white);
     background-color: transparent;
     align-self: center;
+    align-content: center;
+    text-align: center;
+    left: 30%;
+
+    position: absolute;
 }
