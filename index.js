@@ -12,7 +12,7 @@ const server = http.createServer(async (req, res) => {
             let stats = JSON.parse(fs.readFileSync("./stats.json", "utf-8"));
             body += data;
             data = JSON.parse(body); // parse the data
-            
+            console.log(data)
             switch (data["action"]) {  // check which action it is
                 case "seat":
                     for (seat in data["data"]) {
@@ -43,7 +43,7 @@ const server = http.createServer(async (req, res) => {
             fs.writeFileSync("./stats.json", JSON.stringify(stats, null, 4));
         });
         
-        
+
     }
 
     res.statusCode = 200;
