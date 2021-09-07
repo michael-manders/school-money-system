@@ -8,10 +8,10 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method == 'POST') { // if data is posted with jQuery
         let body = '';
-        console.log("Posted")
         req.on('data', function (data) {
             let stats = JSON.parse(fs.readFileSync("./stats.json", "utf-8"));
             body += data;
+            console.log(body);
             data = JSON.parse(body); // parse the data
             switch (data["action"]) {  // check which action it is
                 case "seat":
