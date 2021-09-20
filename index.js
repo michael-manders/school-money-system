@@ -5,47 +5,6 @@ const hostname = '127.0.0.1'
 const port = process.env.PORT || 5000; // define port 
 
 const server = http.createServer(async (req, res) => {
-
-    if (req.method == 'POST') { // if data is posted with jQuery
-        let body = '';
-        req.on('data', function (data) {
-            let stats = JSON.parse(fs.readFileSync("./stats.json", "utf-8"));
-            body += data;
-            console.log(body);
-            data = JSON.parse(body); // parse the data
-            switch (data["action"]) {  // check which action it is
-                case "seat":
-                    for (seat in data["data"]) {
-                        setSeat(data["period"], data["data"][seat], seat);
-                    }
-                    break;
-                case "give":
-                    for (name of data["names"]) {
-                        changeAmount(data["period"], name, true, data["amount"])
-                        stats["total"] += data["amount"];
-                        stats["amount"] += data["amount"];
-                        stats["periods"][data["period"]] += data["amount"];
-                    }
-                    break;
-                case "purchase":
-                    for (name of data["names"]) {
-                        changeAmount(data["period"], name, false, data["amount"])
-                        stats["amount"] -= data["amount"];
-                        stats["periods"][data["period"]] -= data["amount"];
-                    }
-                    break;
-                case "delete": 
-                    deleteSeat(data["period"], data["data"]);
-                    break;
-
-            }
-        
-            fs.writeFileSync("./stats.json", JSON.stringify(stats, null, 4));
-        });
-        
-
-    }
-
     res.statusCode = 200;
 
     url = req.url.split("?")[0]; // devide the data
@@ -99,6 +58,39 @@ const server = http.createServer(async (req, res) => {
         }
         res.end(data);
 
+    }
+    else if (url.includes("/data")) {
+        data = JSON.parse(decodeURI(data));
+        console.log(data);
+        let stats = JSON.parse(fs.readFileSync("./stats.json", "utf-8"));
+            switch (data["action"]) {  // check which action it is
+                case "seat":
+                    for (seat in data["data"]) {
+                        setSeat(data["period"], data["data"][seat], seat);
+                    }
+                    break;
+                case "give":
+                    for (name of data["names"]) {
+                        changeAmount(data["period"], name, true, data["amount"])
+                        stats["total"] += data["amount"];
+                        stats["amount"] += data["amount"];
+                        stats["periods"][data["period"]] += data["amount"];
+                    }
+                    break;
+                case "purchase":
+                    for (name of data["names"]) {
+                        changeAmount(data["period"], name, false, data["amount"])
+                        stats["amount"] -= data["amount"];
+                        stats["periods"][data["period"]] -= data["amount"];
+                    }
+                    break;
+                case "delete": 
+                    deleteSeat(data["period"], data["data"]);
+                    break;
+
+            }
+        
+            fs.writeFileSync("./stats.json", JSON.stringify(stats, null, 4));
     }
     else {
         fn = require("./pages/student/student");

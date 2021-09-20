@@ -169,7 +169,9 @@
                     } else {
                         if (document.confirm == 1) {
                             $.ajax({
-                                url: url,
+                                url:
+                                    "http://127.0.0.1:5000/data?" +
+                                    JSON.stringify(output),
                                 data: JSON.stringify(output),
                                 type: "POST",
                             });
@@ -244,7 +246,9 @@
                     } else {
                         if (document.confirm == 1) {
                             $.ajax({
-                                url: url,
+                                url:
+                                    "http://127.0.0.1:5000/data?" +
+                                    JSON.stringify(output),
                                 data: JSON.stringify(output),
                                 type: "POST",
                             });
@@ -295,7 +299,7 @@
                     action: "seat",
                 };
                 $.ajax({
-                    url: url,
+                    url: "http://127.0.0.1:5000/data?" + JSON.stringify(post),
                     data: JSON.stringify(post),
                     type: "POST",
                 });
@@ -333,7 +337,7 @@
                     action: "delete",
                 };
                 $.ajax({
-                    url: url,
+                    url: "http://127.0.0.1:5000/data?" + JSON.stringify(post),
                     data: JSON.stringify(post),
                     type: "POST",
                 });
