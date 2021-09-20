@@ -73,10 +73,12 @@ body {
     font-size: 300%;
 }
 
+/*
 #table {
     background-color: var(--eggplant);
     grid-area: 1 / 6 / span 2 / span 2;
 }
+*/
 
 h4 {
     line-height: 0.1%;
